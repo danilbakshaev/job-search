@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <div class="container mx-auto px-4 sm:px-0 mt-5">
-      <div v-if="currentJobs.length === 0">
+      <div v-if="loading">
         <p class="text-center">Loading</p>
       </div>
       <div v-else class="bg-blue">
@@ -10,6 +10,15 @@
           placeholder="Search by city"
           name="my-input"
         />
+        <p v-if="!currentJobs.length" class="text-center my-5">
+          Nothing found.
+          <a
+            href="#"
+            @click.prevent="clearSearch()"
+            class="no-underline hover:underline text-blue-400"
+            >Clear search</a
+          >
+        </p>
         <div class="grid gap-4 grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 mt-5">
           <t-card v-for="job in currentJobs" :key="job.id" :header="job.title">
             <img
@@ -61,7 +70,6 @@ export default {
   computed: {
     currentJobs() {
       const tempJobs = this.jobs || [];
-
       // Если строка поиска не заполнена, тогда выводим пустой массив
       if (!this.search) {
         return tempJobs;
@@ -79,6 +87,17 @@ export default {
           return job;
         }
       });
+    },
+    loading() {
+      if (this.jobs) {
+        return false;
+      }
+      return true;
+    },
+  },
+  methods: {
+    clearSearch() {
+      this.search = '';
     },
   },
   settings: {
